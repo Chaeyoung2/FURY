@@ -1,0 +1,10 @@
+
+Server/.vs/Server/v16/.suo
+*.db
+*.ipch
+*.log
+*.tlog
+*.idb
+*.pdb
+*.user
+*.obj
