@@ -9,7 +9,7 @@ void worker_thread()
 
 		DWORD io_byte;
 		ULONGLONG l_key; // 32bits일 때 안 되넴 !!
-		// unsigned long l_key; // 왜 ULONGLONG은 안 되는 거지..?
+		// unsigned long l_key; 
 		OVER_EX* over_ex;
 
 		int is_error = GetQueuedCompletionStatus(g_iocp, &io_byte,
