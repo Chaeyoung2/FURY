@@ -8,3 +8,6 @@ Server/.vs/Server/v16/.suo
 *.pdb
 *.user
 *.obj
+ServerProject/Debug/ServerProject.ilk
+ServerProject/x64/Debug/ServerProject.ilk
+ServerProject/.vs/ServerProject/v16/.suo
