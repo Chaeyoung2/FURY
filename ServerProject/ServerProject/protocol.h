@@ -1,6 +1,6 @@
 #pragma once
 
-#define BUFSIZE 4000
+#define BUFSIZE 4
 #define MAX_PLAYER 3
 
 #define SERVERIP   "127.0.0.1"

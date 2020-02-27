@@ -86,9 +86,7 @@ int main(int argc, char* argv[])
 			err_display("[오류] accept()");
 			return 1;
 		}
-		else {
-			cout << "[접속 대기 중]" << endl;
-		}
+
 		// 아이디 부여.
 		int new_id = -1;
 		for (int i = 0; i < MAX_PLAYER; ++i) {
@@ -194,7 +192,12 @@ void CALLBACK recv_callback(DWORD Error, DWORD dataBytes, LPWSAOVERLAPPED overla
 		clients[id].connected = false;
 		return;
 	}
-
+	
+	float time = 0;
+	int index = 0;
+	unsigned char b[] = { clients[id].buf[index], clients[id].buf[index + 1], clients[id].buf[index + 2] , clients[id].buf[index + 3] };
+	memcpy(&time, &b, sizeof(float));
+	index += sizeof(float);
 
 	// 패킷 재조립
 	int rest = dataBytes; // 도착한 데이터 양
