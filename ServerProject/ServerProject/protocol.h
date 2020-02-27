@@ -1,10 +1,13 @@
 #pragma once
 
-#define BUFSIZE 4
+#define BUFSIZE 128
 #define MAX_PLAYER 3
 
 #define SERVERIP   "127.0.0.1"
 #define SERVERPORT 9000
+
+#define SC_LOGIN_OK 0
+#define SC_PLAYER_POS 1
 
 //////////////////////////////////
 enum packet_type {
@@ -26,6 +29,12 @@ struct packet_info {
 	packet_type type;
 	DWORD id;
 	SOCKET sock;
+};
+
+struct object_pos {
+	float x;
+	float y;
+	float z;
 };
 
 //////////////////////////////////

@@ -119,15 +119,15 @@ int main(int argc, char* argv[])
 
 		// 로그인 되었다는 패킷을 보낸다.
 		{
-			char buf[BUFSIZE];
+			char buf[BUFSIZE] = "";
 			// (고정)
-			packet_info packetinfo;
-			packetinfo.id = new_id;
-			packetinfo.size = sizeof(player_info);
-			packetinfo.type = sc_login_ok;
-			memcpy(buf, &packetinfo, sizeof(packetinfo));
+			char b = '0';
+			char s = ' ';
+			memcpy(buf, &b, sizeof(char));
+			memcpy(buf + sizeof(char), &s, sizeof(char));
 			// (가변)
-			memcpy(buf + sizeof(packetinfo), &(clients[new_id].playerinfo), sizeof(player_info));
+			char id = new_id + '0';
+			memcpy(buf + sizeof(char) + sizeof(char), &(id), sizeof(char));
 			// 전송
 			send_packet(new_id, buf);
 		}
@@ -192,6 +192,9 @@ void CALLBACK recv_callback(DWORD Error, DWORD dataBytes, LPWSAOVERLAPPED overla
 		clients[id].connected = false;
 		return;
 	}
+	
+	object_pos pos = {};
+	memcpy(&pos, clients[id].buf, sizeof(clients[id].buf));
 	
 	float time = 0;
 	int index = 0;
