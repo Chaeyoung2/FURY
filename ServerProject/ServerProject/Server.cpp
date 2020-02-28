@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
 			char buf[BUFSIZE] = "";
 			// (고정)
 			char b = '0';
-			char s = ' ';
+			char s = '/';
 			memcpy(buf, &b, sizeof(char));
 			memcpy(buf + sizeof(char), &s, sizeof(char));
 			// (가변)
