@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 			send_packet(new_id, buf);
 		}
 
-		// new_id의 접속을 다른 클라이언트에게 알린다.
+		// new_id의 접속을 다른 클라이언트에게 알리는 패킷을 보낸다.
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (!clients[i].connected) continue;  // 연결된 클라이언트에게만 보낸다.
 			if (i == new_id) continue;
@@ -148,39 +148,28 @@ int main(int argc, char* argv[])
 			// 전송
 			send_packet(i, buf);
 
-			//////////////// 0304 여기부터 해! 서버가 클라한테 다른 클라 정보를 어케 보낼 건지 고민해봐!!
-			char buf[BUFSIZE];
-			// (고정)
-			packet_info packetinfo;
-			packetinfo.id = new_id;
-			packetinfo.size = sizeof(player_info);
-			packetinfo.type = sc_put_player;
-			memcpy(buf, &packetinfo, sizeof(packetinfo));
-			// (가변)
-			memcpy(buf + sizeof(packetinfo), &(clients[new_id].playerinfo), sizeof(player_info));
-			// 전송
-			send_packet(i, buf);
+			////////////////// 0304 여기부터 해! 서버가 클라한테 다른 클라 정보를 어케 보낼 건지 고민해봐!! // 완료
 
 		}
 
-		// 다른 클라이언트의 존재를 new_id 클라이언트에게 알린다.
+		// 다른 클라이언트의 존재를 new_id 클라이언트에게 알리는 패킷을 보낸다.
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (false == clients[i].connected) continue;
 			if (i == new_id) continue; // 나에게는 보내지 않는다.
-
-			char buf[BUFSIZE];
+			char buf[BUFSIZE] = "";
 			// (고정)
-			packet_info packetinfo;
-			packetinfo.id = i;
-			packetinfo.size = sizeof(player_info);
-			packetinfo.type = sc_put_player;
-			memcpy(buf, &packetinfo, sizeof(packetinfo));
+			char b = '1';
+			char s = '/';
+			memcpy(buf, &b, sizeof(char));
+			memcpy(buf + sizeof(char), &s, sizeof(char));
 			// (가변)
-			memcpy(buf + sizeof(packetinfo), &(clients[i].playerinfo), sizeof(player_info));
+			char id = i + '0';
+			memcpy(buf + sizeof(char) + sizeof(char), &(id), sizeof(char)); // 1/1 패킷을 받은 클라이언트는 0번째 클라이언트일 것이고, 새로운 1번째 클라이언트가 접속했다는 것을 알게 될 것이다.
 			// 전송
 			send_packet(new_id, buf);
 		}
 
+		// new_id는 다시 recv 처리
 		do_recv(new_id);
 		//show_allplayer();
 	}
