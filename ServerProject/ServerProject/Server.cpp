@@ -136,6 +136,19 @@ int main(int argc, char* argv[])
 		for (int i = 0; i < MAX_PLAYER; ++i) {
 			if (!clients[i].connected) continue;  // 연결된 클라이언트에게만 보낸다.
 			if (i == new_id) continue;
+			char buf[BUFSIZE] = "";
+			// (고정)
+			char b = '1';
+			char s = '/';
+			memcpy(buf, &b, sizeof(char));
+			memcpy(buf + sizeof(char), &s, sizeof(char));
+			// (가변)
+			char id = new_id + '0';
+			memcpy(buf + sizeof(char) + sizeof(char), &(id), sizeof(char)); // 1/1 패킷을 받은 클라이언트는 0번째 클라이언트일 것이고, 새로운 1번째 클라이언트가 접속했다는 것을 알게 될 것이다.
+			// 전송
+			send_packet(i, buf);
+
+			//////////////// 0304 여기부터 해! 서버가 클라한테 다른 클라 정보를 어케 보낼 건지 고민해봐!!
 			char buf[BUFSIZE];
 			// (고정)
 			packet_info packetinfo;
