@@ -9,21 +9,29 @@ using System.Net.Sockets;
 using System.Threading;
 using UnityEngine.UI;
 
+
 // Socket 클라이언트
 // http://unitynetworkwithcsharp.blogspot.com/2017/11/socket.html
 // 가장 Low 레벨의 클래스
 
 public class Networking : MonoBehaviour
 {
+    public const int MSG_LENGTH = 128;
+
     Socket socket;
     string ipAddress = "127.0.0.1";
     int port = 9000;
     byte[] sendByte;
     private Thread thread;
     byte[] receiverBuff = new byte[128];
+    string loginText;
 
     public Text LoginText;
     public GameObject player;
+
+    public GameObject[] players; // 생성할 플레이어들을 담는 배열
+    public GameObject playerPrefab; // 생성할 플레이어 프리팹
+    int onInstantiatePlayer = -1;
 
     // Use This for Initialization
     void Start()
@@ -61,9 +69,17 @@ public class Networking : MonoBehaviour
             SendPacket_PlayerMove();
         }
 
-        // socket 클라이언트도 receive 무한정 대기를 하는군,, 이러면 안대
+        // socket 클라이언트도 receive 무한정 대기를 하는군,, 새로 스레드를 만들자
         //byte[] receiveBuff = new byte[4000];
         //int n = socket.Receive(receiveBuff);
+
+        // Recv 스레드 안에서 UI Text 자원을 직접 접근할 수 없다고 하니..
+        LoginText.text = loginText;
+
+        if (onInstantiatePlayer != -1)
+        {
+            InstantiatePlayer(onInstantiatePlayer);
+        }
     }
 
     //////////////////////////////
@@ -101,6 +117,7 @@ public class Networking : MonoBehaviour
     {
         thread = new Thread(ReceivePacket);
         thread.Start();
+       //  thread.Join();
     }
 
     void SendPacket_PlayerMove()
@@ -186,17 +203,41 @@ public class Networking : MonoBehaviour
     {
         while (true)
         {
+            Debug.Log("ReceivePacket() 메서드 작동 중");
             int n = socket.Receive(receiverBuff);
+            Debug.Log("socket.Receive가 무언가를 recv 해옴");
             string data = Encoding.UTF8.GetString(receiverBuff, 0, n);
             Debug.Log(data);
+            byte packettype = receiverBuff[0];
 
-            if (receiverBuff[0] == '0') // 0번째 패킷을 받았다 = 서버로부터 login_ok 패킷을 받았다
+            if (packettype == '0') // 0번째 패킷을 받았다 = 서버로부터 login_ok 패킷을 받았다
             {
                 int id = receiverBuff[2] - '0';
-                Debug.Log(id);
-                LoginText.text = "서버에 [" + id.ToString() + "]번째로 접속 성공!";
+                Debug.Log("login_ok : " + id);
+                CopyLoginText(id);
+
+                Debug.Log("ReceiverBuff 초기화");
+                System.Array.Clear(receiverBuff, 0, MSG_LENGTH);
             }
+            else if(packettype == '1') // 서버로부터 put_player 패킷을 받았다 -> 서버 상에 나 말고 다른 플레이어가 있다!
+            {
+                int id = receiverBuff[2] - '0'; // put player 할 클라이언트의 id
+                Debug.Log("put_player : " + id);
+                onInstantiatePlayer = id;
+            }
+
         }
+    }
+
+    void CopyLoginText(int id)
+    {
+        loginText = "서버에 [" + id.ToString() + "]번째로 접속 성공!";
+    }
+    
+    void InstantiatePlayer(int id)
+    {
+        players[id] = Instantiate(playerPrefab, new Vector3(0, 1, 0), Quaternion.identity);
+        onInstantiatePlayer = -1;
     }
 
 }
