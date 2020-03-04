@@ -223,7 +223,7 @@ public class Networking : MonoBehaviour
             {
                 int id = receiverBuff[2] - '0'; // put player 할 클라이언트의 id
                 Debug.Log("put_player : " + id);
-                onInstantiatePlayer = id;
+                onInstantiatePlayer = id; // 메인 스레드 이외의 스레드에서는 리소스에 접근할 수 없다. --> sol : bool 변수를 둬서 Update()안에서 스위칭 형식으로 메서드 실행
             }
 
         }
