@@ -195,14 +195,16 @@ void CALLBACK recv_callback(DWORD Error, DWORD dataBytes, LPWSAOVERLAPPED overla
 		return;
 	}
 	
-	object_pos pos = {};
-	memcpy(&pos, clients[id].buf, sizeof(clients[id].buf));
-	
-	float time = 0;
-	int index = 0;
-	unsigned char b[] = { clients[id].buf[index], clients[id].buf[index + 1], clients[id].buf[index + 2] , clients[id].buf[index + 3] };
-	memcpy(&time, &b, sizeof(float));
-	index += sizeof(float);
+
+	// 위치 패킷 테스트
+	//object_pos pos = {};
+	//memcpy(&pos, clients[id].buf, sizeof(clients[id].buf));
+	//
+	//float time = 0;
+	//int index = 0;
+	//unsigned char b[] = { clients[id].buf[index], clients[id].buf[index + 1], clients[id].buf[index + 2] , clients[id].buf[index + 3] };
+	//memcpy(&time, &b, sizeof(float));
+	//index += sizeof(float);
 
 	// 패킷 재조립
 	int rest = dataBytes; // 도착한 데이터 양
@@ -237,7 +239,7 @@ void CALLBACK recv_callback(DWORD Error, DWORD dataBytes, LPWSAOVERLAPPED overla
 	// ---------------------------------------------
 	// 패킷 재조립이 끝난 데이터는 clients[id].packet_buffer에 있음.
 	// 따라서 데이터를 가져올 버퍼는 clients[id].buf -> clients[id].packet_buf여야 함
-	//process_packet(id);
+	process_packet(id);
 
 }
 
@@ -285,15 +287,14 @@ void send_packet(char client, char* buf)
 void process_packet(int id)
 {
 	player_info playerinfo;
-	packet_info packetinfo;
+	int packetId;
 
 	// 고정 길이 패킷.
-	memcpy(&packetinfo, clients[id].packet_buf, sizeof(packetinfo));
-	int fromid = packetinfo.id;
+	memcpy(&packetId, clients[id].packet_buf, sizeof(byte));
 
 
 	// 가변 길이 패킷.
-	switch (packetinfo.type) {
+	switch (packetId) {
 	}
 
 	// show_allplayer();
