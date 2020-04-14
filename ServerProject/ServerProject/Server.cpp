@@ -295,46 +295,6 @@ void process_packet(int id)
 
 	// 가변 길이 패킷.
 	switch (packetId) {
-	case 0:
-		// 1. cs_move 패킷을 보내온 클라이언트의 정보를 받아온다.
-	{
-		char buf[BUFSIZE];
-		memcpy(&playerinfo, clients[fromid].packet_buf + sizeof(packetinfo), sizeof(player_info));
-		clients[fromid].playerinfo = playerinfo;
-	}
-
-	// 2. 다른 접속 중인 클라이언트에게 움직인 클라이언트의 정보를 보낸다.
-	{
-		char buf[BUFSIZE];
-		// (고정)
-		memset(&packetinfo, 0x00, sizeof(packetinfo));
-		packetinfo.id = fromid;
-		packetinfo.size = sizeof(playerinfo);
-		packetinfo.type = sc_notify_playerinfo;
-		memcpy(buf, &packetinfo, sizeof(packetinfo));
-		// (가변)
-		memcpy(buf + sizeof(packetinfo), &(clients[fromid].playerinfo), sizeof(player_info));
-		// 전송
-		for (int i = 0; i < NUM_OF_PLAYER; ++i) {
-			if (!clients[i].connected) continue;
-			if (i == fromid) continue;
-			send_packet(i, buf);
-		}
-
-	}
-
-	// 3. 보내온 클라이언트의 소켓은 다시 Recv를 시작한다.
-	{
-		do_recv(fromid);
-	}
-
-		break;
-	case 1:
-		break;
-	case 2:
-		break;
-	case 3:
-		break;
 	}
 
 	// show_allplayer();
