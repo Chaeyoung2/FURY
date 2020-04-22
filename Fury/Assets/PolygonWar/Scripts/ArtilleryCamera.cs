@@ -28,7 +28,7 @@ public class ArtilleryCamera : MonoBehaviour
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked; // 게임중 마우스 커서 숨김
         Vector3 angles = transform.eulerAngles;
 
         x = angles.y;

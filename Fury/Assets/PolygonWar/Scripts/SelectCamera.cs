@@ -8,37 +8,22 @@ public class SelectCamera : MonoBehaviour
     public Camera ArtilleryCam;
     public GameObject SetScope;
 
-    public bool Cam1 = true;
-    public bool Cam2 = false;
+    public int CamNum = 0;
 
-    void Swap()
+    void Start()
     {
-        if (Cam1 == true)
-        {
-            Cam1 = false;
-            Cam2 = true;
-        }
-        else
-        {
-            Cam1 = true;
-            Cam2 = false;
-        }
+        CamNum = PlayerCtrl.CamNum; // 플레이어 컨트롤러에서 카메라 넘버 변수를 전달받음
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Swap();
-        }
-
-        if (Cam1 == true)
+        if (CamNum == 1) // 포병시점 (스코프On)
         {
             ArtilleryCam.enabled = true;
             ObserverCam.enabled = false;
             SetScope.SetActive(true);
         }
-        else
+        else if(CamNum == 2) // 정찰병시점 (스코프Off)
         {
             ArtilleryCam.enabled = false;
             ObserverCam.enabled = true;
